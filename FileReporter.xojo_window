@@ -197,7 +197,7 @@ Begin DesktopWindow FileReporter
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "File List Creator - Creative Technology"
+      Text            =   "Frame Count - Lucy and Nils"
       TextAlignment   =   2
       TextColor       =   &cF8C51D00
       Tooltip         =   ""
@@ -579,6 +579,35 @@ End
 		  Output = ffmpeg + duration + quote + Path + quote
 		  
 		  Output = ReplaceAll(output, "duration=", "")
+		  
+		  Return Output
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function fnframecount(Path As String) As String
+		  Dim ffmpeg As String
+		  If TargetMacOS Then
+		    ffmpeg = ffDest
+		  ElseIf TargetWindows Then
+		    ffmpeg = "ffprobe "
+		  End If
+		  
+		  Dim frameCount As String
+		  frameCount =  " -v error -hide_banner -select_streams v:0 -count_frames -show_entries stream=nb_read_frames -print_format default=nokey=1:noprint_wrappers=1 "
+		  
+		  Dim quote As String
+		  If TargetMacOS Then
+		    quote = "'"
+		  ElseIf TargetWindows Then
+		    quote = Chr(34)
+		  End If
+		  
+		  Var Output As String
+		  Output = ffmpeg + frameCount + quote + Path + quote
+		  
+		  Output = ReplaceAll(output, "frameCount=", "")
 		  
 		  Return Output
 		  
@@ -1055,7 +1084,7 @@ End
 		                      Loop Until Not theShell.IsRunning
 		                      
 		                      //Duration value
-		                      theShell.Execute fnduration(File2.NativePath)
+		                      theShell.Execute fnframecount(File2.NativePath)
 		                      Do
 		                        theShell.Poll
 		                        ff2Duration = theShell.Result
@@ -1155,7 +1184,7 @@ End
 		                    Loop Until Not theShell.IsRunning
 		                    
 		                    //Duration Value
-		                    theShell.Execute fnduration(File1.NativePath)
+		                    theShell.Execute fnframecount(File1.NativePath)
 		                    Do
 		                      theShell.Poll
 		                      ff1Duration = theShell.Result
@@ -1257,7 +1286,7 @@ End
 		                Loop Until Not theShell.IsRunning
 		                
 		                //Duration Value
-		                theShell.Execute fnduration(File0.NativePath)
+		                theShell.Execute fnframecount(File0.NativePath)
 		                Do
 		                  theShell.Poll
 		                  ff0Duration = theShell.Result
@@ -1696,7 +1725,7 @@ End
 		Group="Behavior"
 		InitialValue="0"
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="RulesWidth"
@@ -1704,6 +1733,6 @@ End
 		Group="Behavior"
 		InitialValue="0"
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior
