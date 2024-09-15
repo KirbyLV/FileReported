@@ -23,7 +23,7 @@ Begin DesktopWindow FileReporter
    Title           =   "File Reporter"
    Type            =   0
    Visible         =   True
-   Width           =   600
+   Width           =   800
    Begin DesktopTextField FolderField
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
@@ -63,7 +63,7 @@ Begin DesktopWindow FileReporter
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   474
+      Width           =   674
    End
    Begin DesktopButton OpenButton
       AllowAutoDeactivate=   True
@@ -121,7 +121,7 @@ Begin DesktopWindow FileReporter
       HeadingIndex    =   -1
       Height          =   194
       Index           =   -2147483648
-      InitialValue    =   "File	Location	Codec	Width	Height	FrameRate	Duration	Audio Codec	Audio Channels"
+      InitialValue    =   "File	Location	Codec	Width	Height	FrameRate	Duration	FrameCount	Audio Codec	Audio Channels"
       Italic          =   False
       Left            =   20
       LockBottom      =   True
@@ -140,7 +140,7 @@ Begin DesktopWindow FileReporter
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   560
+      Width           =   760
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -173,7 +173,7 @@ Begin DesktopWindow FileReporter
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   560
+      Width           =   760
    End
    Begin DesktopLabel TitleLabel
       AllowAutoDeactivate=   True
@@ -205,7 +205,7 @@ Begin DesktopWindow FileReporter
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   560
+      Width           =   760
    End
    Begin DesktopButton BrowseButton
       AllowAutoDeactivate=   True
@@ -251,7 +251,7 @@ Begin DesktopWindow FileReporter
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   500
+      Left            =   700
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -308,7 +308,7 @@ Begin DesktopWindow FileReporter
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   388
+      Width           =   588
    End
    Begin DesktopButton RulesButton
       AllowAutoDeactivate=   True
@@ -385,7 +385,7 @@ Begin DesktopWindow FileReporter
       Index           =   -2147483648
       InitialValue    =   "Enabled\nDisabled"
       Italic          =   False
-      Left            =   419
+      Left            =   619
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -413,7 +413,7 @@ Begin DesktopWindow FileReporter
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   327
+      Left            =   527
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1051,7 +1051,9 @@ End
 		                  Dim ff2 As String
 		                  Dim ff2width As String
 		                  Dim ff2height As String
+		                  Dim ff2res As String
 		                  Dim ff2Duration As String
+		                  Dim ff2frameCount As String
 		                  Dim ff2framerate As String
 		                  Dim ff2audiocodec As String
 		                  Dim ff2audiochannels As String
@@ -1084,10 +1086,18 @@ End
 		                      Loop Until Not theShell.IsRunning
 		                      
 		                      //Duration value
-		                      theShell.Execute fnframecount(File2.NativePath)
+		                      theShell.Execute fnduration(File2.NativePath)
 		                      Do
 		                        theShell.Poll
 		                        ff2Duration = theShell.Result
+		                        App.DoEvents
+		                      Loop Until Not theShell.IsRunning
+		                      
+		                      //FrameCount value
+		                      theShell.Execute fnframecount(File2.NativePath)
+		                      Do
+		                        theShell.Poll
+		                        ff2frameCount = theShell.Result
 		                        App.DoEvents
 		                      Loop Until Not theShell.IsRunning
 		                      
@@ -1119,6 +1129,7 @@ End
 		                      ff2 = "FFMpeg Not Setup"
 		                      ff2width = "FFMpeg Not Setup"
 		                      ff2height = "FFMpeg Not Setup"
+		                      ff2frameCount = "FFMpeg Not Setup"
 		                      ff2Duration = "FFMpeg Not Setup"
 		                      ff2framerate = "FFMpeg Not Setup"
 		                      ff2audiocodec = "FFMpeg Not Setup"
@@ -1128,29 +1139,31 @@ End
 		                    ff2 = ""
 		                    ff2width = ""
 		                    ff2height = ""
+		                    ff2frameCount = ""
 		                    ff2Duration = ""
 		                    ff2framerate = ""
 		                    ff2audiocodec = ""
 		                    ff2audiochannels = ""
 		                  End If
-		                  Var ff2res As String
-		                  
 		                  ff2 = ReplaceAll(ff2, "codec_name=", "")
 		                  ff2width = ReplaceAll(ff2width, "Width=","")
 		                  ff2height = ReplaceAll(ff2height, "Height=", "")
 		                  ff2res = ff2width + " x " + ff2height
+		                  ff2frameCount = ReplaceAll(ff2frameCount, "frame_count=", "")
 		                  ff2Duration = ReplaceAll(ff2Duration, "duration=", "")
 		                  ff2framerate = ReplaceAll(ff2framerate, "r_frame_rate=","")
 		                  ff2audiocodec = ReplaceAll(ff2audiocodec, "codec_name=", "")
 		                  ff2audiochannels = ReplaceAll(ff2audiochannels, "channels=", "")
 		                  
-		                  FileList.AddRow(File2.Name, File2.NativePath, ff2, ff2width, ff2height, ff2framerate, ff2Duration, ff2audiocodec, ff2audiochannels)
+		                  FileList.AddRow(File2.Name, File2.NativePath, ff2, ff2width, ff2height, ff2framerate, ff2Duration, ff2frameCount, ff2audiocodec, ff2audiochannels)
 		                Next
 		              Else
 		                //ffMPEG setup tree level 1
 		                Dim ff1 As String
 		                Dim ff1width As String
 		                Dim ff1height As String
+		                Dim ff1res As String
+		                Dim ff1frameCount As String
 		                Dim ff1Duration As String
 		                Dim ff1FrameRate As String
 		                Dim ff1audiocodec As String
@@ -1184,10 +1197,18 @@ End
 		                    Loop Until Not theShell.IsRunning
 		                    
 		                    //Duration Value
-		                    theShell.Execute fnframecount(File1.NativePath)
+		                    theShell.Execute fnduration(File1.NativePath)
 		                    Do
 		                      theShell.Poll
 		                      ff1Duration = theShell.Result
+		                      App.DoEvents
+		                    Loop Until Not theShell.IsRunning
+		                    
+		                    //FrameCount Value
+		                    theShell.Execute fnframecount(File1.NativePath)
+		                    Do
+		                      theShell.Poll
+		                      ff1frameCount = theShell.Result
 		                      App.DoEvents
 		                    Loop Until Not theShell.IsRunning
 		                    
@@ -1220,6 +1241,7 @@ End
 		                    ff1width = "FFMpeg Not Setup"
 		                    ff1height = "FFMpeg Not Setup"
 		                    ff1Duration = "FFMpeg Not Setup"
+		                    ff1frameCount = "FFMpeg Not Setup"
 		                    ff1FrameRate = "FFMpeg Not Setup"
 		                    ff1audiocodec = "FFMpeg Not Setup"
 		                    ff1audiochannels = "FFMpeg Not Setup"
@@ -1229,22 +1251,23 @@ End
 		                  ff1width = ""
 		                  ff1height = ""
 		                  ff1Duration = ""
+		                  ff1frameCount = ""
 		                  ff1FrameRate = ""
 		                  ff1audiocodec = ""
 		                  ff1audiochannels = ""
 		                End If
-		                Var ff1res As String
 		                ff1 = ReplaceAll(ff1, "codec_name=", "")
 		                ff1width = ReplaceAll(ff1width, "Width=","")
 		                ff1height = ReplaceAll(ff1height, "Height=", "")
 		                ff1res = ff1width + " x " + ff1height
 		                ff1Duration = ReplaceAll(ff1Duration, "duration=", "")
+		                ff1frameCount = ReplaceAll(ff1frameCount, "frame_count=", "")
 		                ff1FrameRate = ReplaceAll(ff1FrameRate, "r_frame_rate=", "")
 		                ff1audiocodec = ReplaceAll(ff1audiocodec, "codec_name=", "")
 		                ff1audiochannels = ReplaceAll(ff1audiochannels, "channels=", "")
 		                
 		                
-		                FileList.AddRow(file1.Name, File1.NativePath, ff1, ff1width, ff1height, ff1FrameRate, ff1Duration, ff1audiocodec, ff1audiochannels)
+		                FileList.AddRow(file1.Name, File1.NativePath, ff1, ff1width, ff1height, ff1FrameRate, ff1Duration, ff1frameCount, ff1audiocodec, ff1audiochannels)
 		              End If
 		            Next
 		            
@@ -1253,7 +1276,9 @@ End
 		            Dim ff0 As String
 		            Dim ff0width As String
 		            Dim ff0height As String
+		            Dim ff0res As String
 		            Dim ff0Duration As String
+		            Dim ff0frameCount As String
 		            Dim ff0FrameRate As String
 		            Dim ff0audiocodec As String
 		            Dim ff0audiochannels As String
@@ -1286,10 +1311,18 @@ End
 		                Loop Until Not theShell.IsRunning
 		                
 		                //Duration Value
-		                theShell.Execute fnframecount(File0.NativePath)
+		                theShell.Execute fnduration(File0.NativePath)
 		                Do
 		                  theShell.Poll
 		                  ff0Duration = theShell.Result
+		                  App.DoEvents
+		                Loop Until Not theShell.IsRunning
+		                
+		                //FrameCount Value
+		                theShell.Execute fnframecount(File0.NativePath)
+		                Do
+		                  theShell.Poll
+		                  ff0frameCount = theShell.Result
 		                  App.DoEvents
 		                Loop Until Not theShell.IsRunning
 		                
@@ -1322,6 +1355,7 @@ End
 		                ff0width = "FFMpeg Not Setup"
 		                ff0height = "FFMpeg Not Setup"
 		                ff0Duration = "FFMpeg Not Setup"
+		                ff0frameCount = "FFMpeg Not Setup"
 		                ff0FrameRate = "FFMpeg Not Setup"
 		                ff0audiocodec = "FFMpeg Not Setup"
 		                ff0audiochannels = "FFMpeg Not Setup"
@@ -1331,21 +1365,22 @@ End
 		              ff0width = ""
 		              ff0height = ""
 		              ff0Duration = ""
+		              ff0frameCount = ""
 		              ff0FrameRate = ""
 		              ff0audiocodec = ""
 		              ff0audiochannels = ""
 		            End If
-		            Var ff0res As String
 		            ff0 = ReplaceAll(ff0, "codec_name=", "")
 		            ff0width = ReplaceAll(ff0width, "Width=","")
 		            ff0height = ReplaceAll(ff0height, "Height=", "")
 		            ff0res = ff0width + " x " + ff0height
 		            ff0Duration = ReplaceAll(ff0Duration, "duration=", "")
+		            ff0frameCount = ReplaceAll(ff0frameCount, "frame_count=", "")
 		            ff0FrameRate = ReplaceAll(ff0FrameRate, "r_frame_rate=", "")
 		            ff0audiocodec = ReplaceAll(ff0audiocodec, "codec_name=", "")
 		            ff0audiochannels = ReplaceAll(ff0audiochannels, "channels=", "")
 		            
-		            FileList.AddRow(File0.Name, File0.NativePath, ff0, ff0width, ff0height, ff0FrameRate, ff0Duration, ff0audiocodec, ff0audiochannels)
+		            FileList.AddRow(File0.Name, File0.NativePath, ff0, ff0width, ff0height, ff0FrameRate, ff0Duration, ff0frameCount, ff0audiocodec, ff0audiochannels)
 		          End If
 		          
 		        Next
@@ -1420,7 +1455,7 @@ End
 		    Output.Delimiter = EndOfLine.Native
 		    
 		    Var HeaderLine As String
-		    HeaderLine = "File;Location;Codec;Width;Height;FrameRate;Duration;Audio Codec;Audio Channels"
+		    HeaderLine = "File;Location;Codec;Width;Height;FrameRate;Duration;Frame Count;Audio Codec;Audio Channels"
 		    output.WriteLine(HeaderLine)
 		    
 		    For Each row As DesktopListboxRow In FileList.Rows
@@ -1428,7 +1463,7 @@ End
 		      If FileList.CellTextAt(cr) <> "" Then
 		        
 		        Var OutLine As String
-		        Outline = FileList.CellTextAt(cr,0) + ";" + FileList.CellTextAt(cr,1) + ";" + FileList.CellTextAt(cr,2) + ";" + FileList.CellTextAt(cr,3) + ";" + FileList.CellTextAt(cr,4) + ";" + FileList.CellTextAt(cr,5) + ";" + FileList.CellTextAt(cr,6) + ";" + FileList.CellTextAt(cr,7) + ";" + FileList.CellTextAt(cr,8)
+		        Outline = FileList.CellTextAt(cr,0) + ";" + FileList.CellTextAt(cr,1) + ";" + FileList.CellTextAt(cr,2) + ";" + FileList.CellTextAt(cr,3) + ";" + FileList.CellTextAt(cr,4) + ";" + FileList.CellTextAt(cr,5) + ";" + FileList.CellTextAt(cr,6) + ";" + FileList.CellTextAt(cr,7) + ";" + FileList.CellTextAt(cr,8) + ";" + FileList.CellTextAt(cr,9)
 		        Outline = ReplaceAll(Outline, chr(13), "")
 		        Outline = ReplaceAll(Outline, chr(10), "")
 		        output.WriteLine(OutLine) 
